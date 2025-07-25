@@ -13,35 +13,24 @@
 </head>
 <body>
     <div class="app">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">
-                    <i data-lucide="git-commit-horizontal" class="logo-icon"></i>
-                    <span class="logo-text">GitPulse</span>
-                </div>
-            </div>
-            
-
-            
-            <div class="sidebar-footer">
-                <div class="status-indicator">
-                    <div class="status-dot"></div>
-                    <span>Auto-sync active</span>
-                </div>
-            </div>
-        </nav>
-
         <!-- Main Content -->
-        <main class="main-content">
+        <main class="main-content full-width">
             <!-- Header -->
             <header class="header">
                 <div class="header-content">
                     <div class="header-info">
+                        <div class="header-logo">
+                            <i data-lucide="git-commit-horizontal" class="logo-icon"></i>
+                            <span class="logo-text">GitPulse</span>
+                        </div>
                         <h1>Daily Commit Dashboard</h1>
                         <p class="header-subtitle">Track your coding consistency and build lasting habits</p>
                     </div>
                     <div class="header-actions">
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span>Auto-sync active</span>
+                        </div>
                         <div class="last-sync">
                             <i data-lucide="clock"></i>
                             <span id="last-update">Loading...</span>

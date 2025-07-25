@@ -31,6 +31,10 @@ args = "Mobile Optimized Dashboard Server"
 task = "workflow.run"
 args = "Optimized Dashboard"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Clean Dashboard"
+
 [[workflows.workflow]]
 name = "GitHub Actions Workflow Demo"
 author = "agent"
@@ -67,6 +71,15 @@ waitForPort = 5000
 
 [[workflows.workflow]]
 name = "Optimized Dashboard"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python server.py"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Clean Dashboard"
 author = "agent"
 
 [[workflows.workflow.tasks]]
