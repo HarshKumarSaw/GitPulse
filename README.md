@@ -54,10 +54,10 @@ Test that everything works:
 
 ## 📊 What Happens Daily
 
-Every day at 2:00 AM UTC, the workflow automatically:
+Every day at 7:30 AM IST (Indian Standard Time), the workflow automatically:
 
 1. **Wakes up** and checks out your repository
-2. **Creates/updates** log files with current timestamp
+2. **Creates/updates** log files with current timestamp in IST
 3. **Commits** the changes with a descriptive message
 4. **Pushes** to keep your repository active
 5. **Reports** success in the Actions tab
@@ -74,13 +74,13 @@ The workflow creates and maintains:
 Edit the cron time in `.github/workflows/daily-commit.yml`:
 ```yaml
 schedule:
-  - cron: '0 2 * * *'  # 2:00 AM UTC daily
+  - cron: '0 2 * * *'  # 7:30 AM IST daily (2:00 AM UTC)
 ```
 
-Common alternatives:
-- `'0 12 * * *'` - Noon UTC daily
-- `'0 0 * * *'` - Midnight UTC daily
-- `'0 6 * * 1-5'` - 6 AM UTC on weekdays only
+Common alternatives for IST:
+- `'0 6 * * *'` - 11:30 AM IST daily
+- `'30 18 * * *'` - 12:00 AM IST daily (midnight)
+- `'30 0 * * 1-5'` - 6:00 AM IST on weekdays only
 
 ### Change Commit Messages
 Modify the commit message in the workflow file:
