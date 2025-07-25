@@ -236,7 +236,7 @@ body {
 /* Header */
 .header {
     margin-bottom: 3rem;
-    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 50%, #6366f1 100%);
+    background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 50%, #2563eb 100%);
     border-radius: var(--border-radius-xl);
     padding: 3rem 2.5rem;
     position: relative;
@@ -353,7 +353,7 @@ body {
 }
 
 .stat-card.primary {
-    background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+    background: linear-gradient(135deg, #f59e0b, #d97706);
     color: white;
     border: none;
     position: relative;
