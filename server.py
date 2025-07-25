@@ -92,11 +92,7 @@ def find_available_port(start_port=5000):
 
 def run_server():
     """Run the development server"""
-    try:
-        PORT = find_available_port(5000)
-    except RuntimeError:
-        print("❌ No available ports found")
-        return
+    PORT = 5000
     
     # Change to the directory containing the dashboard files
     os.chdir(os.path.dirname(os.path.abspath(__file__)))

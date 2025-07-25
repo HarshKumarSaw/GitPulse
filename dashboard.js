@@ -266,13 +266,39 @@ class StreakDashboard {
             this.data.activityData.slice(-42) : 
             this.data.activityData;
         
-        dataToShow.forEach(day => {
-            const dayElement = document.createElement('div');
-            dayElement.className = `heatmap-day${day.level > 0 ? ' level-' + day.level : ''}`;
-            dayElement.setAttribute('data-date', day.date);
-            dayElement.title = `${day.date}: ${day.activity ? 'Active' : 'No activity'}`;
-            container.appendChild(dayElement);
-        });
+        if (isMobile) {
+            // Mobile: simple sequential layout
+            dataToShow.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = `heatmap-day${day.level > 0 ? ' level-' + day.level : ''}`;
+                dayElement.setAttribute('data-date', day.date);
+                dayElement.title = `${day.date}: ${day.activity ? 'Active' : 'No activity'}`;
+                container.appendChild(dayElement);
+            });
+        } else {
+            // Desktop: arrange in weekly grid (13 weeks x 7 days)
+            // Create 91 slots (13 weeks * 7 days) to fill the grid properly
+            const totalSlots = 13 * 7; // 91 slots
+            const startIndex = Math.max(0, dataToShow.length - totalSlots);
+            
+            // Fill grid from oldest to newest, left to right, top to bottom
+            for (let i = 0; i < totalSlots; i++) {
+                const dayIndex = startIndex + i;
+                const day = dayIndex < dataToShow.length ? dataToShow[dayIndex] : null;
+                
+                const dayElement = document.createElement('div');
+                if (day) {
+                    dayElement.className = `heatmap-day${day.level > 0 ? ' level-' + day.level : ''}`;
+                    dayElement.setAttribute('data-date', day.date);
+                    dayElement.title = `${day.date}: ${day.activity ? 'Active' : 'No activity'}`;
+                } else {
+                    // Empty slot for padding
+                    dayElement.className = 'heatmap-day empty';
+                    dayElement.style.opacity = '0.3';
+                }
+                container.appendChild(dayElement);
+            }
+        }
         
         // Update chart header for mobile
         if (isMobile) {
