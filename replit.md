@@ -7,6 +7,8 @@ This repository contains a GitHub Actions automation system designed to maintain
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Timezone: Indian Standard Time (IST) for all timestamps and scheduling.
+Date completed: 2025-07-25 - Basic daily commit automation with IST timing configured.
 
 ## System Architecture
 
