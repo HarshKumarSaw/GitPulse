@@ -57,16 +57,27 @@ Test that everything works:
 Every day at 7:30 AM IST (Indian Standard Time), the workflow automatically:
 
 1. **Wakes up** and checks out your repository
-2. **Creates/updates** log files with current timestamp in IST
-3. **Commits** the changes with a descriptive message
-4. **Pushes** to keep your repository active
-5. **Reports** success in the Actions tab
+2. **Calculates streak** - counts consecutive days of commits
+3. **Creates/updates** log files with current timestamp in IST and day count
+4. **Commits** the changes with streak info in the message
+5. **Pushes** to keep your repository active
+6. **Reports** success in the Actions tab
+
+## 🔥 Streak Tracking Features
+
+Your automation now includes smart streak counting:
+- **Daily counter**: Each commit shows which day number it is (Day 1, Day 2, etc.)
+- **Streak detection**: Automatically detects if you missed a day and resets the count
+- **Streak info**: Shows when your current streak started
+- **Commit messages**: Include streak info like "Daily activity update (Day 15)"
 
 ## 📁 Files Created
 
 The workflow creates and maintains:
-- `logs/daily-activity.log` - Running log of all daily activities
-- `logs/last-update.txt` - Most recent update timestamp
+- `logs/daily-activity.log` - Running log of all daily activities with streak info
+- `logs/last-update.txt` - Most recent update timestamp and current streak
+- `logs/streak-count.txt` - Current consecutive day count
+- `logs/streak-info.txt` - Streak start date and details
 
 ## 🛠️ Customization Options
 
