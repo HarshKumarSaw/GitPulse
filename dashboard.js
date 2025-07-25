@@ -127,9 +127,12 @@ class StreakDashboard {
         const dates = activityLines.map(line => {
             const match = line.match(/(\d{4}-\d{2}-\d{2})/);
             return match ? match[1] : null;
-        }).filter(date => date);
+        }).filter(date => date).sort();
         
-        dates.forEach(dateStr => {
+        // Remove duplicates (same day multiple commits)
+        const uniqueDates = [...new Set(dates)];
+        
+        uniqueDates.forEach(dateStr => {
             const date = new Date(dateStr);
             if (lastDate) {
                 const diffDays = Math.floor((date - lastDate) / (1000 * 60 * 60 * 24));
@@ -148,10 +151,18 @@ class StreakDashboard {
         longestStreak = Math.max(longestStreak, currentStreak);
         this.data.longestStreak = longestStreak;
         
-        // Calculate success rate (assuming target is daily commits)
-        const daysSinceStart = dates.length > 0 ? 
-            Math.floor((new Date() - new Date(dates[0])) / (1000 * 60 * 60 * 24)) + 1 : 1;
-        this.data.successRate = Math.round((dates.length / daysSinceStart) * 100);
+        // Calculate success rate more accurately
+        if (uniqueDates.length > 0) {
+            const startDate = new Date(uniqueDates[0]);
+            const endDate = new Date();
+            const totalDaysPossible = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+            
+            // Success rate = (unique commit days / total days possible) * 100
+            // Ensure it never exceeds 100%
+            this.data.successRate = Math.min(100, Math.round((uniqueDates.length / totalDaysPossible) * 100));
+        } else {
+            this.data.successRate = 0;
+        }
     }
 
     generateActivityData(activityLines) {
@@ -177,10 +188,10 @@ class StreakDashboard {
     loadDemoData() {
         // Demo data for development/testing
         this.data = {
-            currentStreak: 15,
-            totalCommits: 42,
-            longestStreak: 23,
-            successRate: 89,
+            currentStreak: 7,
+            totalCommits: 28,
+            longestStreak: 15,
+            successRate: 85, // Realistic success rate under 100%
             lastUpdate: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST',
             activityData: []
         };
@@ -198,8 +209,17 @@ class StreakDashboard {
             date.setDate(date.getDate() - i);
             const dateStr = date.toISOString().split('T')[0];
             
-            // Random activity with higher probability for recent days
-            const activityChance = Math.random() > (i / 120);
+            // More realistic activity pattern - 85% success rate
+            // Higher chance for recent days, some gaps for realism
+            let activityChance;
+            if (i < 7) {
+                activityChance = Math.random() > 0.1; // 90% for last week
+            } else if (i < 30) {
+                activityChance = Math.random() > 0.2; // 80% for last month
+            } else {
+                activityChance = Math.random() > 0.3; // 70% for older days
+            }
+            
             last90Days.push({
                 date: dateStr,
                 activity: activityChance ? 1 : 0,
