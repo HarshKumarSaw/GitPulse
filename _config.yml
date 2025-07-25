@@ -1,27 +1,23 @@
-# GitHub Pages Configuration
-title: "Daily Commit Streak Dashboard"
-description: "Interactive dashboard for tracking automated daily commit streaks"
+# GitHub Pages configuration
+title: GitPulse - Daily Commit Dashboard
+description: Track your coding consistency and build lasting habits
+theme: minima
 
 # GitHub Pages settings
-theme: jekyll-theme-minimal
 plugins:
-  - jekyll-feed
+  - jekyll-relative-links
 
-# Custom settings
-repository_name: "daily-commit-automation"
-author: "Automated Streak Tracker"
+# Exclude files from build
+exclude:
+  - README.md
+  - logs/
+  - server.py
+  - simple_server.py
+  - pyproject.toml
+  - uv.lock
 
 # Include necessary files
 include:
   - dashboard.css
   - dashboard.js
-  - logs/
-
-# Exclude unnecessary files from site build
-exclude:
-  - README.md
-  - setup.sh
-  - .github/
-
-# Site URL configuration (will be auto-configured by GitHub Pages)
-baseurl: ""
+  - index.html

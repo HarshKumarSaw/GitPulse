@@ -15,14 +15,28 @@
     --gray-800: #1f2937;
     --gray-900: #111827;
     
+    --green-100: #dcfce7;
     --green-400: #4ade80;
     --green-500: #22c55e;
+    --green-600: #16a34a;
+    --orange-100: #fed7aa;
     --orange-400: #fb923c;
     --orange-500: #f97316;
+    --red-100: #fee2e2;
     --red-400: #f87171;
     --red-500: #ef4444;
+    --blue-100: #dbeafe;
     --blue-400: #60a5fa;
     --blue-500: #3b82f6;
+    --purple-100: #f3e8ff;
+    --purple-400: #a855f7;
+    --purple-500: #9333ea;
+    --pink-100: #fce7f3;
+    --pink-400: #f472b6;
+    --pink-500: #ec4899;
+    --yellow-100: #fef3c7;
+    --yellow-400: #fbbf24;
+    --yellow-500: #f59e0b;
     
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
     --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -42,11 +56,12 @@
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background-color: var(--gray-50);
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     color: var(--gray-900);
     line-height: 1.5;
     font-feature-settings: 'cv11', 'ss01';
     font-variation-settings: 'opsz' 32;
+    min-height: 100vh;
 }
 
 .app {
@@ -172,8 +187,38 @@ body {
 }
 
 @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+    0%, 100% { 
+        opacity: 1; 
+        transform: scale(1);
+    }
+    50% { 
+        opacity: 0.7; 
+        transform: scale(1.05);
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 53%, 80%, 100% {
+        transform: translate3d(0,0,0);
+    }
+    40%, 43% {
+        transform: translate3d(0, -5px, 0);
+    }
+    70% {
+        transform: translate3d(0, -3px, 0);
+    }
+    90% {
+        transform: translate3d(0, -1px, 0);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -468px 0;
+    }
+    100% {
+        background-position: 468px 0;
+    }
 }
 
 /* Main Content */
@@ -271,6 +316,11 @@ body {
     animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
+.stats-grid .stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stats-grid .stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stats-grid .stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stats-grid .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
 .stat-card {
     background: white;
     border-radius: var(--border-radius-lg);
@@ -308,6 +358,24 @@ body {
     border: none;
     position: relative;
     overflow: hidden;
+}
+
+.stat-card:nth-child(2) {
+    background: linear-gradient(135deg, var(--green-500), var(--green-600));
+    color: white;
+    border: none;
+}
+
+.stat-card:nth-child(3) {
+    background: linear-gradient(135deg, var(--orange-500), var(--yellow-500));
+    color: white;
+    border: none;
+}
+
+.stat-card:nth-child(4) {
+    background: linear-gradient(135deg, var(--purple-500), var(--pink-500));
+    color: white;
+    border: none;
 }
 
 .stat-card.primary::before {
@@ -348,7 +416,10 @@ body {
     transform: scale(1.1) rotate(5deg);
 }
 
-.stat-card.primary .stat-icon {
+.stat-card.primary .stat-icon,
+.stat-card:nth-child(2) .stat-icon,
+.stat-card:nth-child(3) .stat-icon,
+.stat-card:nth-child(4) .stat-icon {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -358,7 +429,10 @@ body {
     stroke-width: 2;
 }
 
-.stat-card.primary .stat-icon i {
+.stat-card.primary .stat-icon i,
+.stat-card:nth-child(2) .stat-icon i,
+.stat-card:nth-child(3) .stat-icon i,
+.stat-card:nth-child(4) .stat-icon i {
     color: white;
 }
 
@@ -411,6 +485,24 @@ body {
     border: 1px solid var(--gray-200);
     overflow: hidden;
     min-width: 0; /* Prevent flex items from overflowing */
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.chart-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.chart-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--blue-500), var(--purple-500), var(--pink-500));
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
 }
 
 .chart-header {
@@ -490,14 +582,27 @@ body {
 }
 
 .heatmap-day:hover {
-    transform: scale(1.05);
+    transform: scale(1.1) rotate(2deg);
     z-index: 1;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.heatmap-day.level-1 { background-color: #c6e48b; }
-.heatmap-day.level-2 { background-color: #7bc96f; }
-.heatmap-day.level-3 { background-color: #239a3b; }
-.heatmap-day.level-4 { background-color: #196127; }
+.heatmap-day.level-1 { 
+    background: linear-gradient(135deg, #a7f3d0, #6ee7b7);
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.2);
+}
+.heatmap-day.level-2 { 
+    background: linear-gradient(135deg, #6ee7b7, #34d399);
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+}
+.heatmap-day.level-3 { 
+    background: linear-gradient(135deg, #34d399, #10b981);
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.4);
+}
+.heatmap-day.level-4 { 
+    background: linear-gradient(135deg, #10b981, #059669);
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.5);
+}
 
 .heatmap-legend {
     display: flex;
@@ -579,6 +684,13 @@ body {
     border-radius: var(--border-radius-lg);
     border: 1px solid var(--gray-200);
     overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+}
+
+.activity-feed:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
 }
 
 .activity-item {
@@ -605,8 +717,24 @@ body {
     width: 40px;
     height: 40px;
     border-radius: var(--border-radius);
-    background-color: var(--green-100);
+    background: linear-gradient(135deg, var(--green-100), var(--blue-100));
     color: var(--green-600);
+    transition: all 0.3s ease;
+}
+
+.activity-item:nth-child(odd) .activity-icon {
+    background: linear-gradient(135deg, var(--purple-100), var(--pink-100));
+    color: var(--purple-600);
+}
+
+.activity-item:nth-child(even) .activity-icon {
+    background: linear-gradient(135deg, var(--blue-100), var(--green-100));
+    color: var(--blue-600);
+}
+
+.activity-item:hover .activity-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .activity-icon i {
@@ -858,13 +986,26 @@ body {
 
 /* Loading States */
 .loading {
+    background: linear-gradient(90deg, #f0f0f0 25%, transparent 37%, #f0f0f0 63%);
+    background-size: 400% 100%;
     animation: shimmer 1.5s ease-in-out infinite;
 }
 
-@keyframes shimmer {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
+/* GitHub Pages compatibility - ensure all animations work */
+@media (prefers-reduced-motion: no-preference) {
+    .bounce-on-load {
+        animation: bounce 1s ease-in-out;
+    }
+    
+    .success-pulse {
+        animation: pulse 0.6s ease-in-out;
+    }
+}
+
+/* Ensure GitHub Pages compatibility */
+.github-pages-ready {
+    /* All CSS is using standard properties compatible with GitHub Pages */
+    /* No dynamic imports or server-side processing required */
 }
 
 /* Tooltip */
