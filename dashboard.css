@@ -367,7 +367,7 @@ body {
 }
 
 .stat-card:nth-child(3) {
-    background: linear-gradient(135deg, var(--orange-500), var(--yellow-500));
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
     color: white;
     border: none;
 }
