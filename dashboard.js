@@ -21,6 +21,14 @@ class StreakDashboard {
             this.renderRecentActivity();
             this.renderMilestones();
             this.startAutoRefresh();
+            
+            // Re-render on window resize for responsive design
+            window.addEventListener('resize', () => {
+                setTimeout(() => {
+                    this.renderHeatmap();
+                    this.renderStreakChart();
+                }, 100);
+            });
         } catch (error) {
             console.error('Failed to initialize dashboard:', error);
             this.showError();
@@ -250,13 +258,34 @@ class StreakDashboard {
         const container = document.getElementById('activity-heatmap');
         container.innerHTML = '';
         
-        this.data.activityData.forEach(day => {
+        // Check if mobile view
+        const isMobile = window.innerWidth <= 768;
+        
+        // Show last 42 days (6 weeks) on mobile, full 90 days on desktop
+        const dataToShow = isMobile ? 
+            this.data.activityData.slice(-42) : 
+            this.data.activityData;
+        
+        dataToShow.forEach(day => {
             const dayElement = document.createElement('div');
             dayElement.className = `heatmap-day${day.level > 0 ? ' level-' + day.level : ''}`;
             dayElement.setAttribute('data-date', day.date);
             dayElement.title = `${day.date}: ${day.activity ? 'Active' : 'No activity'}`;
             container.appendChild(dayElement);
         });
+        
+        // Update chart header for mobile
+        if (isMobile) {
+            const chartHeader = container.closest('.chart-card').querySelector('.chart-header p');
+            if (chartHeader) {
+                chartHeader.textContent = 'Last 6 weeks of commits';
+            }
+        } else {
+            const chartHeader = container.closest('.chart-card').querySelector('.chart-header p');
+            if (chartHeader) {
+                chartHeader.textContent = 'Last 90 days of commits';
+            }
+        }
     }
 
     renderStreakChart() {

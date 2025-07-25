@@ -23,6 +23,14 @@ args = "test-workflow"
 task = "workflow.run"
 args = "Dashboard Server"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Mobile Optimized Dashboard Server"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Optimized Dashboard"
+
 [[workflows.workflow]]
 name = "GitHub Actions Workflow Demo"
 author = "agent"
@@ -41,6 +49,24 @@ args = "cat .github/workflows/daily-commit.yml | head -20 && echo \"--- Workflow
 
 [[workflows.workflow]]
 name = "Dashboard Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python server.py"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Mobile Optimized Dashboard Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python server.py"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Optimized Dashboard"
 author = "agent"
 
 [[workflows.workflow.tasks]]
