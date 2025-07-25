@@ -331,6 +331,8 @@ body {
     padding: 1.5rem;
     box-shadow: var(--shadow);
     border: 1px solid var(--gray-200);
+    overflow: hidden;
+    min-width: 0; /* Prevent flex items from overflowing */
 }
 
 .chart-header {
@@ -352,6 +354,8 @@ body {
 .chart-body {
     position: relative;
     height: 300px;
+    overflow: hidden;
+    padding: 0.5rem;
 }
 
 .chart-body canvas {
@@ -363,8 +367,11 @@ body {
 .heatmap-container {
     display: grid;
     grid-template-columns: repeat(13, 1fr);
-    gap: 4px;
+    gap: 3px;
     margin-bottom: 1rem;
+    overflow: hidden;
+    max-width: 100%;
+    padding: 0.5rem;
 }
 
 .heatmap-day {
@@ -377,7 +384,7 @@ body {
 }
 
 .heatmap-day:hover {
-    transform: scale(1.1);
+    transform: scale(1.05);
     z-index: 1;
 }
 
@@ -625,10 +632,13 @@ body {
     
     .heatmap-container {
         grid-template-columns: repeat(7, 1fr);
+        gap: 2px;
+        padding: 0.25rem;
     }
     
     .chart-body {
         height: 250px;
+        padding: 0.25rem;
     }
 }
 
