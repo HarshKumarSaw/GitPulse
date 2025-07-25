@@ -125,6 +125,24 @@ mkdir -p logs  # Change "logs" to your preferred directory
 - ✅ **Customizable** - Easy to modify schedule and behavior
 - ✅ **Transparent** - All activity visible in Actions tab
 
+## 📊 Interactive Dashboard
+
+Your repository now includes a beautiful, interactive dashboard to visualize your streak progress:
+
+**Dashboard Features:**
+- 🔥 **Live streak counter** with current day count
+- 📈 **Interactive charts** showing streak trends over time  
+- 🗓️ **Activity heatmap** (90-day visual history like GitHub's contribution graph)
+- 🏆 **Milestone tracking** (1 week, 1 month, 100 days, 1 year)
+- 📱 **Mobile-friendly** responsive design
+
+**Quick Dashboard Setup:**
+1. **Enable GitHub Pages**: Repository Settings → Pages → Deploy from main branch
+2. **Access your dashboard**: `https://yourusername.github.io/repository-name`
+3. **Auto-updates**: Dashboard refreshes automatically with new commits
+
+The dashboard reads data directly from your log files and displays real-time streak information with beautiful charts and animations.
+
 ## 💡 Pro Tips
 
 - The workflow creates all necessary directories automatically
@@ -132,7 +150,8 @@ mkdir -p logs  # Change "logs" to your preferred directory
 - All changes are minimal to avoid repository bloat
 - Works with both public and private repositories
 - No external dependencies or API keys needed
+- Dashboard works on both desktop and mobile devices
 
 ---
 
-**Ready to use!** Just copy this repository structure to your GitHub repo and enjoy automated daily activity! 🎉
+**Ready to use!** Just copy this repository structure to your GitHub repo and enjoy automated daily activity with visual tracking! 🎉

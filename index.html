@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Commit Streak Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="dashboard-header">
+            <h1>🤖 Daily Commit Streak Dashboard</h1>
+            <p class="subtitle">Automated repository activity tracking</p>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card current-streak">
+                <div class="stat-icon">🔥</div>
+                <div class="stat-content">
+                    <h2 id="current-streak">Loading...</h2>
+                    <p>Current Streak</p>
+                </div>
+            </div>
+
+            <div class="stat-card total-commits">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <h2 id="total-commits">Loading...</h2>
+                    <p>Total Commits</p>
+                </div>
+            </div>
+
+            <div class="stat-card longest-streak">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-content">
+                    <h2 id="longest-streak">Loading...</h2>
+                    <p>Longest Streak</p>
+                </div>
+            </div>
+
+            <div class="stat-card success-rate">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <h2 id="success-rate">Loading...</h2>
+                    <p>Success Rate</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <div class="chart-container">
+                <h3>Activity Heatmap (Last 90 Days)</h3>
+                <div id="activity-heatmap" class="heatmap-container">
+                    <!-- Heatmap will be generated here -->
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>Streak Trend (Last 30 Days)</h3>
+                <canvas id="streak-chart"></canvas>
+            </div>
+        </div>
+
+        <div class="recent-activity">
+            <h3>Recent Activity</h3>
+            <div id="activity-list" class="activity-list">
+                <!-- Recent commits will be listed here -->
+            </div>
+        </div>
+
+        <div class="milestones">
+            <h3>Streak Milestones</h3>
+            <div id="milestones-list" class="milestones-grid">
+                <!-- Milestones will be generated here -->
+            </div>
+        </div>
+
+        <footer class="dashboard-footer">
+            <p>Last updated: <span id="last-update">Loading...</span></p>
+            <p>Data refreshes automatically when new commits are detected</p>
+        </footer>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

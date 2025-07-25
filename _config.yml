@@ -1,0 +1,27 @@
+# GitHub Pages Configuration
+title: "Daily Commit Streak Dashboard"
+description: "Interactive dashboard for tracking automated daily commit streaks"
+
+# GitHub Pages settings
+theme: jekyll-theme-minimal
+plugins:
+  - jekyll-feed
+
+# Custom settings
+repository_name: "daily-commit-automation"
+author: "Automated Streak Tracker"
+
+# Include necessary files
+include:
+  - dashboard.css
+  - dashboard.js
+  - logs/
+
+# Exclude unnecessary files from site build
+exclude:
+  - README.md
+  - setup.sh
+  - .github/
+
+# Site URL configuration (will be auto-configured by GitHub Pages)
+baseurl: ""
