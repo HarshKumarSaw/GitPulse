@@ -1,0 +1,80 @@
+name: Daily Repository Activity
+
+on:
+  schedule:
+    # Run every day at 2:00 AM UTC (adjust timezone as needed)
+    - cron: '0 2 * * *'
+  workflow_dispatch: # Allow manual triggering for testing
+
+jobs:
+  daily-commit:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write # Required for pushing commits
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0 # Fetch full history for proper git operations
+      
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      
+      - name: Create or update activity log
+        run: |
+          # Create logs directory if it doesn't exist
+          mkdir -p logs
+          
+          # Get current timestamp
+          TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S UTC')
+          
+          # Append timestamp to activity log
+          echo "Daily activity commit - $TIMESTAMP" >> logs/daily-activity.log
+          
+          # Also update a status file with just the latest timestamp
+          echo "Last updated: $TIMESTAMP" > logs/last-update.txt
+      
+      - name: Check for changes
+        id: verify-changed-files
+        run: |
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "No changes detected"
+            echo "changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected"
+            echo "changes=true" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit and push changes
+        if: steps.verify-changed-files.outputs.changes == 'true'
+        run: |
+          TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S UTC')
+          
+          # Add all changes in logs directory
+          git add logs/
+          
+          # Commit with timestamp
+          git commit -m "🤖 Daily activity update - $TIMESTAMP" -m "Automated commit to maintain repository activity"
+          
+          # Push changes
+          git push origin ${{ github.ref_name }}
+      
+      - name: Log completion
+        run: |
+          if [[ "${{ steps.verify-changed-files.outputs.changes }}" == "true" ]]; then
+            echo "✅ Daily commit completed successfully"
+          else
+            echo "ℹ️ No changes to commit (this shouldn't normally happen)"
+          fi
+      
+      - name: Handle errors
+        if: failure()
+        run: |
+          echo "❌ Daily commit workflow failed"
+          echo "Please check the workflow logs for details"
+          exit 1

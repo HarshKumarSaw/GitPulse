@@ -1,0 +1,36 @@
+modules = ["nodejs-20"]
+
+[nix]
+channel = "stable-25_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "GitHub Actions Workflow Demo"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "test-workflow"
+
+[[workflows.workflow]]
+name = "GitHub Actions Workflow Demo"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "echo \"GitHub Actions Daily Commit Workflow is configured!\" && echo \"This workflow will:\" && echo \"- Run daily at 2:00 AM UTC\" && echo \"- Create activity logs in logs/ directory\" && echo \"- Make automated commits to maintain repository activity\" && echo \"\" && echo \"To test locally, we can simulate the workflow steps:\" && mkdir -p logs && TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S UTC') && echo \"Daily activity commit - $TIMESTAMP\" >> logs/daily-activity.log && echo \"Last updated: $TIMESTAMP\" > logs/last-update.txt && echo \"\" && echo \"Generated files:\" && ls -la logs/ && echo \"\" && echo \"Content of daily-activity.log:\" && cat logs/daily-activity.log && echo \"\" && echo \"Content of last-update.txt:\" && cat logs/last-update.txt && echo \"\" && echo \"✅ Workflow simulation completed successfully!\""
+
+[[workflows.workflow]]
+name = "test-workflow"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cat .github/workflows/daily-commit.yml | head -20 && echo \"--- Workflow file exists and is readable ---\" && echo \"Checking YAML syntax...\" && python3 -c \"import yaml; yaml.safe_load(open('.github/workflows/daily-commit.yml'))\" && echo \"YAML syntax is valid!\" && echo \"--- Checking if logs directory structure works ---\" && mkdir -p logs && echo \"Test entry - $(date)\" >> logs/daily-activity.log && echo \"Last test: $(date)\" > logs/last-update.txt && ls -la logs/ && echo \"--- Files created successfully ---\""
