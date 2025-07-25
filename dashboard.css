@@ -240,10 +240,7 @@ body {
     margin-bottom: 0.5rem;
 }
 
-.header-subtitle {
-    font-size: 1rem;
-    color: var(--gray-600);
-}
+
 
 .header-actions {
     display: flex;
@@ -252,13 +249,7 @@ body {
     flex-wrap: wrap;
 }
 
-.last-sync {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.875rem;
-    color: var(--gray-500);
-}
+
 
 .last-sync i {
     width: 16px;
