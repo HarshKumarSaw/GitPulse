@@ -61,16 +61,43 @@ class StreakDashboard {
     }
 
     async fetchFile(path) {
-        const repoInfo = this.getRepoInfo();
-        const url = `https://api.github.com/repos/${repoInfo.username}/${repoInfo.repoName}/contents/${path}`;
+        // Check if we're running locally (Replit) or on GitHub Pages
+        const isLocal = window.location.hostname === 'localhost' || 
+                       window.location.hostname.includes('replit') ||
+                       window.location.port !== '';
         
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Failed to fetch ${path}`);
+        if (isLocal) {
+            // Use local API endpoints for Replit
+            const apiMap = {
+                'logs/streak-count.txt': '/api/streak-count',
+                'logs/daily-activity.log': '/api/activity-log',
+                'logs/last-update.txt': '/api/last-update',
+                'logs/streak-info.txt': '/api/streak-info'
+            };
+            
+            const apiEndpoint = apiMap[path];
+            if (apiEndpoint) {
+                const response = await fetch(apiEndpoint);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch ${path}`);
+                }
+                return await response.text();
+            }
+        } else {
+            // Use GitHub API for GitHub Pages
+            const repoInfo = this.getRepoInfo();
+            const url = `https://api.github.com/repos/${repoInfo.username}/${repoInfo.repoName}/contents/${path}`;
+            
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch ${path}`);
+            }
+            
+            const data = await response.json();
+            return atob(data.content); // Decode base64 content
         }
         
-        const data = await response.json();
-        return atob(data.content); // Decode base64 content
+        throw new Error(`Unknown file path: ${path}`);
     }
 
     parseData(streakData, activityData, lastUpdateData) {
