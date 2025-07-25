@@ -180,16 +180,39 @@ class StreakDashboard {
         const last90Days = [];
         const today = new Date();
         
+        // Extract all dates from activity lines and count commits per day
+        const activityByDate = {};
+        activityLines.forEach(line => {
+            const match = line.match(/(\d{4}-\d{2}-\d{2})/);
+            if (match) {
+                const dateStr = match[1];
+                activityByDate[dateStr] = (activityByDate[dateStr] || 0) + 1;
+            }
+        });
+        
+        // Generate last 90 days from today backwards
         for (let i = 89; i >= 0; i--) {
             const date = new Date(today);
             date.setDate(date.getDate() - i);
             const dateStr = date.toISOString().split('T')[0];
             
-            const hasActivity = activityLines.some(line => line.includes(dateStr));
+            const commitCount = activityByDate[dateStr] || 0;
+            const hasActivity = commitCount > 0;
+            
+            // Calculate activity level based on commit count
+            let level = 0;
+            if (hasActivity) {
+                if (commitCount >= 4) level = 4;
+                else if (commitCount >= 3) level = 3;
+                else if (commitCount >= 2) level = 2;
+                else level = 1;
+            }
+            
             last90Days.push({
                 date: dateStr,
-                activity: hasActivity ? 1 : 0,
-                level: hasActivity ? Math.floor(Math.random() * 4) + 1 : 0
+                activity: commitCount,
+                level: level,
+                commits: commitCount
             });
         }
         
@@ -234,10 +257,19 @@ class StreakDashboard {
                 activityChance = Math.random() > 0.3; // 70% for older days
             }
             
+            const commits = activityChance ? Math.floor(Math.random() * 3) + 1 : 0;
+            let level = 0;
+            if (commits > 0) {
+                if (commits >= 3) level = 4;
+                else if (commits >= 2) level = 3;
+                else level = Math.floor(Math.random() * 2) + 1;
+            }
+            
             last90Days.push({
                 date: dateStr,
-                activity: activityChance ? 1 : 0,
-                level: activityChance ? Math.floor(Math.random() * 4) + 1 : 0
+                activity: commits,
+                level: level,
+                commits: commits
             });
         }
         
@@ -278,7 +310,7 @@ class StreakDashboard {
                 const dayElement = document.createElement('div');
                 dayElement.className = `heatmap-day${day.level > 0 ? ' level-' + day.level : ''}`;
                 dayElement.setAttribute('data-date', day.date);
-                dayElement.title = `${day.date}: ${day.activity ? 'Active' : 'No activity'}`;
+                dayElement.title = `${day.date}: ${day.commits || day.activity} commit${(day.commits || day.activity) === 1 ? '' : 's'}`;
                 container.appendChild(dayElement);
             });
         } else {
@@ -296,7 +328,7 @@ class StreakDashboard {
                 if (day) {
                     dayElement.className = `heatmap-day${day.level > 0 ? ' level-' + day.level : ''}`;
                     dayElement.setAttribute('data-date', day.date);
-                    dayElement.title = `${day.date}: ${day.activity ? 'Active' : 'No activity'}`;
+                    dayElement.title = `${day.date}: ${day.commits || day.activity} commit${(day.commits || day.activity) === 1 ? '' : 's'}`;
                 } else {
                     // Empty slot for padding
                     dayElement.className = 'heatmap-day empty';
