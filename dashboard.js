@@ -119,6 +119,9 @@ class StreakDashboard {
         // Calculate longest streak and success rate
         this.calculateStreakStats(activityLines);
         
+        // Ensure longest streak is at least equal to current streak
+        this.data.longestStreak = Math.max(this.data.longestStreak, this.data.currentStreak);
+        
         // Parse last update
         const lastUpdateLines = lastUpdateData.trim().split('\n');
         this.data.lastUpdate = lastUpdateLines[0].replace('Last updated: ', '');
@@ -195,10 +198,13 @@ class StreakDashboard {
 
     loadDemoData() {
         // Demo data for development/testing
+        const currentStreak = 7;
+        const longestStreak = 15;
+        
         this.data = {
-            currentStreak: 7,
+            currentStreak: currentStreak,
             totalCommits: 28,
-            longestStreak: 15,
+            longestStreak: Math.max(longestStreak, currentStreak), // Ensure longest >= current
             successRate: 85, // Realistic success rate under 100%
             lastUpdate: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST',
             activityData: []
