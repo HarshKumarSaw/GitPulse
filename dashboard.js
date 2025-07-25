@@ -211,15 +211,18 @@ class StreakDashboard {
     }
 
     renderStats() {
-        document.getElementById('current-streak').textContent = this.data.currentStreak + ' days';
+        document.getElementById('current-streak').textContent = this.data.currentStreak;
         document.getElementById('total-commits').textContent = this.data.totalCommits;
-        document.getElementById('longest-streak').textContent = this.data.longestStreak + ' days';
+        document.getElementById('longest-streak').textContent = this.data.longestStreak;
         document.getElementById('success-rate').textContent = this.data.successRate + '%';
         document.getElementById('last-update').textContent = this.data.lastUpdate;
         
-        // Add celebration animation for good streaks
+        // Add success animation for good streaks
         if (this.data.currentStreak >= 7) {
-            document.querySelector('.current-streak').classList.add('streak-celebration');
+            document.querySelector('.stat-card.primary').classList.add('success-pulse');
+            setTimeout(() => {
+                document.querySelector('.stat-card.primary').classList.remove('success-pulse');
+            }, 600);
         }
     }
 
@@ -323,7 +326,9 @@ class StreakDashboard {
         
         container.innerHTML = recentActivities.map(day => `
             <div class="activity-item">
-                <div class="activity-icon">✅</div>
+                <div class="activity-icon">
+                    <i data-lucide="check-circle"></i>
+                </div>
                 <div class="activity-content">
                     <h4>Daily commit completed</h4>
                     <p>${new Date(day.date).toLocaleDateString('en-US', { 
@@ -333,29 +338,47 @@ class StreakDashboard {
                         day: 'numeric' 
                     })}</p>
                 </div>
+                <div class="activity-time">
+                    ${this.getTimeAgo(day.date)}
+                </div>
             </div>
         `).join('');
+        
+        // Re-initialize icons for new content
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
 
     renderMilestones() {
         const milestones = [
-            { days: 7, icon: '🎯', text: '1 Week' },
-            { days: 30, icon: '🏅', text: '1 Month' },
-            { days: 100, icon: '💯', text: '100 Days' },
-            { days: 365, icon: '🏆', text: '1 Year' }
+            { days: 7, icon: 'target', text: '1 Week Streak' },
+            { days: 30, icon: 'medal', text: '1 Month Streak' },
+            { days: 100, icon: 'award', text: '100 Day Streak' },
+            { days: 365, icon: 'trophy', text: '1 Year Streak' }
         ];
         
         const container = document.getElementById('milestones-list');
         container.innerHTML = milestones.map(milestone => {
             const achieved = this.data.longestStreak >= milestone.days;
+            const daysToGo = milestone.days - this.data.currentStreak;
             return `
-                <div class="milestone ${achieved ? 'achieved' : 'pending'}">
-                    <div class="milestone-icon">${milestone.icon}</div>
+                <div class="milestone ${achieved ? 'achieved' : ''}">
+                    <div class="milestone-icon">
+                        <i data-lucide="${milestone.icon}"></i>
+                    </div>
                     <div class="milestone-text">${milestone.text}</div>
-                    <div>${achieved ? 'Achieved!' : `${milestone.days - this.data.currentStreak} days to go`}</div>
+                    <div class="milestone-progress">
+                        ${achieved ? 'Completed!' : (daysToGo > 0 ? `${daysToGo} days to go` : 'Almost there!')}
+                    </div>
                 </div>
             `;
         }).join('');
+        
+        // Re-initialize icons for new content
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
 
     startAutoRefresh() {
@@ -370,14 +393,36 @@ class StreakDashboard {
         }, 5 * 60 * 1000);
     }
 
+    getTimeAgo(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 0) return 'Today';
+        if (diffDays === 1) return 'Yesterday';
+        if (diffDays < 7) return `${diffDays} days ago`;
+        if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+        return `${Math.floor(diffDays / 30)} months ago`;
+    }
+
     showError() {
-        document.body.innerHTML = `
-            <div style="text-align: center; padding: 50px; font-family: Arial, sans-serif;">
-                <h2>⚠️ Unable to load dashboard data</h2>
-                <p>Make sure your repository has the daily commit workflow set up and running.</p>
-                <p>The dashboard will show demo data for now.</p>
-            </div>
-        `;
+        const mainContent = document.querySelector('.main-content');
+        if (mainContent) {
+            mainContent.innerHTML = `
+                <div style="text-align: center; padding: 4rem; font-family: Inter, sans-serif;">
+                    <div style="background: white; border-radius: 12px; padding: 3rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+                        <i data-lucide="alert-triangle" style="width: 64px; height: 64px; color: #f97316; margin-bottom: 1rem;"></i>
+                        <h2 style="font-size: 1.5rem; font-weight: 600; color: #1f2937; margin-bottom: 1rem;">Unable to load dashboard data</h2>
+                        <p style="color: #6b7280; margin-bottom: 0.5rem;">Make sure your repository has the daily commit workflow set up and running.</p>
+                        <p style="color: #6b7280;">The dashboard will show demo data for now.</p>
+                    </div>
+                </div>
+            `;
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        }
         this.loadDemoData();
         setTimeout(() => this.init(), 1000);
     }
