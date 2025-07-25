@@ -72,14 +72,31 @@ class DashboardHandler(http.server.SimpleHTTPRequestHandler):
             now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             return f"Last updated: {now} IST\nCurrent streak: 7 consecutive days"
         elif 'streak-info.txt' in file_path:
-            from datetime import datetime
+            from datetime import datetime, timedelta
             start_date = (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
             return f"Streak started: {start_date}"
         return "Demo data"
 
+def find_available_port(start_port=5000):
+    """Find an available port starting from the given port"""
+    import socket
+    port = start_port
+    while port < start_port + 100:  # Try up to 100 ports
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.bind(("0.0.0.0", port))
+                return port
+        except OSError:
+            port += 1
+    raise RuntimeError("No available ports found")
+
 def run_server():
     """Run the development server"""
-    PORT = 5000
+    try:
+        PORT = find_available_port(5000)
+    except RuntimeError:
+        print("❌ No available ports found")
+        return
     
     # Change to the directory containing the dashboard files
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
@@ -87,7 +104,11 @@ def run_server():
     # Create logs directory if it doesn't exist
     os.makedirs('logs', exist_ok=True)
     
-    with socketserver.TCPServer(("0.0.0.0", PORT), DashboardHandler) as httpd:
+    # Allow socket reuse
+    class ReusableServer(socketserver.TCPServer):
+        allow_reuse_address = True
+    
+    with ReusableServer(("0.0.0.0", PORT), DashboardHandler) as httpd:
         print(f"🚀 Dashboard server running on port {PORT}")
         print(f"📊 Open your dashboard at: http://0.0.0.0:{PORT}")
         print("Press Ctrl+C to stop the server")
