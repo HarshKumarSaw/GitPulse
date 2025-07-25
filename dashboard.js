@@ -212,6 +212,11 @@ class StreakDashboard {
     renderStreakChart() {
         const ctx = document.getElementById('streak-chart').getContext('2d');
         
+        // Destroy existing chart if it exists
+        if (this.streakChart) {
+            this.streakChart.destroy();
+        }
+        
         // Generate streak data for last 30 days
         const last30Days = this.data.activityData.slice(-30);
         const labels = last30Days.map(day => {
@@ -231,7 +236,7 @@ class StreakDashboard {
             streakData.push(currentStreak);
         });
         
-        new Chart(ctx, {
+        this.streakChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
@@ -251,14 +256,26 @@ class StreakDashboard {
                 scales: {
                     y: {
                         beginAtZero: true,
+                        max: Math.max(...streakData) + 2,
                         ticks: {
                             stepSize: 1
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxTicksLimit: 10
                         }
                     }
                 },
                 plugins: {
                     legend: {
                         display: false
+                    }
+                },
+                elements: {
+                    point: {
+                        radius: 4,
+                        hoverRadius: 6
                     }
                 }
             }

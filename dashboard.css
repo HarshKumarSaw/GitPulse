@@ -97,12 +97,22 @@ body {
     border-radius: 15px;
     padding: 25px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    height: 400px;
+    display: flex;
+    flex-direction: column;
 }
 
 .chart-container h3 {
     margin-bottom: 20px;
     color: #333;
     text-align: center;
+    flex-shrink: 0;
+}
+
+.chart-container canvas {
+    flex: 1;
+    max-height: 300px !important;
+    width: 100% !important;
 }
 
 /* Heatmap Styling */
@@ -111,6 +121,9 @@ body {
     grid-template-columns: repeat(13, 1fr);
     gap: 3px;
     max-width: 100%;
+    height: 300px;
+    overflow: hidden;
+    flex: 1;
 }
 
 .heatmap-day {
@@ -275,6 +288,15 @@ body {
     
     .heatmap-container {
         grid-template-columns: repeat(7, 1fr);
+        height: 200px;
+    }
+    
+    .chart-container {
+        height: 350px;
+    }
+    
+    .chart-container canvas {
+        max-height: 250px !important;
     }
 }
 
