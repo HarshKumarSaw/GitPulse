@@ -1,116 +1,81 @@
-name: Daily Repository Activity
+name: Daily Commit Tracker
 
 on:
   schedule:
-    # Run every day at 7:30 AM IST (2:00 AM UTC = 7:30 AM IST)
+    # Run daily at 2:00 AM UTC
     - cron: '0 2 * * *'
-  workflow_dispatch: # Allow manual triggering for testing
+  workflow_dispatch: # Allow manual triggering
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 
 jobs:
-  daily-commit:
+  update-activity:
     runs-on: ubuntu-latest
-    
-    permissions:
-      contents: write # Required for pushing commits
-    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0 # Fetch full history for proper git operations
+    - name: Checkout repository
+      uses: actions/checkout@v4
       
-      - name: Configure Git
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+    - name: Setup timezone
+      run: |
+        sudo timedatectl set-timezone UTC
+        
+    - name: Create logs directory
+      run: mkdir -p logs
       
-      - name: Create or update activity log
-        run: |
-          # Create logs directory if it doesn't exist
-          mkdir -p logs
-          
-          # Get current timestamp in IST (UTC+5:30)
-          UTC_TIME=$(date -u '+%Y-%m-%d %H:%M:%S')
-          IST_TIME=$(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M:%S IST')
-          TODAY=$(TZ='Asia/Kolkata' date '+%Y-%m-%d')
-          
-          # Initialize streak file if it doesn't exist
-          if [ ! -f "logs/streak-count.txt" ]; then
-            echo "1" > logs/streak-count.txt
-            echo "Streak started: $TODAY" > logs/streak-info.txt
-          else
-            # Read current streak
-            CURRENT_STREAK=$(cat logs/streak-count.txt)
-            LAST_COMMIT_DATE=$(tail -1 logs/daily-activity.log | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' || echo "")
-            
-            # Calculate if this is consecutive day
-            if [ ! -z "$LAST_COMMIT_DATE" ]; then
-              YESTERDAY=$(TZ='Asia/Kolkata' date -d "$TODAY -1 day" '+%Y-%m-%d')
-              if [ "$LAST_COMMIT_DATE" = "$YESTERDAY" ]; then
-                # Consecutive day - increment streak
-                NEW_STREAK=$((CURRENT_STREAK + 1))
-                echo "$NEW_STREAK" > logs/streak-count.txt
-                echo "Current streak: $NEW_STREAK days (since $(head -1 logs/streak-info.txt | cut -d':' -f2))" > logs/streak-info.txt
-              else
-                # Streak broken - reset to 1
-                echo "1" > logs/streak-count.txt
-                echo "Streak restarted: $TODAY" > logs/streak-info.txt
-              fi
-            else
-              # No previous date found - start new streak
-              echo "1" > logs/streak-count.txt
-              echo "Streak started: $TODAY" > logs/streak-info.txt
-            fi
-          fi
-          
-          # Read final streak count
-          STREAK_COUNT=$(cat logs/streak-count.txt)
-          
-          # Append timestamp and streak to activity log
-          echo "Daily activity commit - $IST_TIME (Day $STREAK_COUNT)" >> logs/daily-activity.log
-          
-          # Update status file with streak info
-          echo "Last updated: $IST_TIME" > logs/last-update.txt
-          echo "Current streak: $STREAK_COUNT consecutive days" >> logs/last-update.txt
+    - name: Update activity logs
+      run: |
+        TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S UTC')
+        echo "Daily activity commit - $TIMESTAMP" >> logs/daily-activity.log
+        echo "Last updated: $TIMESTAMP" > logs/last-update.txt
+        
+        # Update streak count
+        if [ ! -f logs/streak-count.txt ]; then
+          echo "1" > logs/streak-count.txt
+        else
+          CURRENT_STREAK=$(cat logs/streak-count.txt)
+          NEW_STREAK=$((CURRENT_STREAK + 1))
+          echo "$NEW_STREAK" > logs/streak-count.txt
+        fi
+        
+        # Update streak info
+        if [ ! -f logs/streak-info.txt ]; then
+          START_DATE=$(date '+%Y-%m-%d')
+          echo "Streak started: $START_DATE" > logs/streak-info.txt
+        fi
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add logs/
+        git commit -m "Daily activity update - $(date '+%Y-%m-%d %H:%M:%S UTC')" || exit 0
+        git push
+        
+  deploy-pages:
+    needs: update-activity
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: main
+        
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
       
-      - name: Check for changes
-        id: verify-changed-files
-        run: |
-          if git diff --quiet && git diff --staged --quiet; then
-            echo "No changes detected"
-            echo "changes=false" >> $GITHUB_OUTPUT
-          else
-            echo "Changes detected"
-            echo "changes=true" >> $GITHUB_OUTPUT
-          fi
-      
-      - name: Commit and push changes
-        if: steps.verify-changed-files.outputs.changes == 'true'
-        run: |
-          IST_TIME=$(TZ='Asia/Kolkata' date '+%Y-%m-%d %H:%M:%S IST')
-          STREAK_COUNT=$(cat logs/streak-count.txt)
-          
-          # Add all changes in logs directory
-          git add logs/
-          
-          # Commit with timestamp and streak info
-          git commit -m "🤖 Daily activity update - $IST_TIME (Day $STREAK_COUNT)" -m "Automated commit to maintain repository activity streak"
-          
-          # Push changes
-          git push origin ${{ github.ref_name }}
-      
-      - name: Log completion
-        run: |
-          if [[ "${{ steps.verify-changed-files.outputs.changes }}" == "true" ]]; then
-            echo "✅ Daily commit completed successfully"
-          else
-            echo "ℹ️ No changes to commit (this shouldn't normally happen)"
-          fi
-      
-      - name: Handle errors
-        if: failure()
-        run: |
-          echo "❌ Daily commit workflow failed"
-          echo "Please check the workflow logs for details"
-          exit 1
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.'
+        
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

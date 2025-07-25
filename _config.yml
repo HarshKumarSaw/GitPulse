@@ -10,14 +10,15 @@ plugins:
 # Exclude files from build
 exclude:
   - README.md
-  - logs/
   - server.py
   - simple_server.py
   - pyproject.toml
   - uv.lock
+  - setup.sh
 
 # Include necessary files
 include:
   - dashboard.css
   - dashboard.js
   - index.html
+  - logs/

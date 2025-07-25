@@ -8,7 +8,7 @@ This repository contains a GitHub Actions automation system designed to maintain
 
 Preferred communication style: Simple, everyday language.
 Timezone: Indian Standard Time (IST) for all timestamps and scheduling.
-Date completed: 2025-07-25 - Complete daily commit automation with modern, mobile-optimized dashboard.
+Date completed: 2025-07-25 - Complete daily commit automation with modern, mobile-optimized dashboard ready for GitHub Pages deployment.
 
 ## System Architecture
 
@@ -26,11 +26,11 @@ Date completed: 2025-07-25 - Complete daily commit automation with modern, mobil
 
 ## Key Components
 
-### 1. Workflow Engine (`daily-commit.yml`)
-- **Purpose**: Orchestrates the daily commit automation
-- **Trigger**: Time-based cron schedule (daily at 2:00 AM UTC)
-- **Actions**: File manipulation, git operations, and repository updates
-- **Permissions**: Read/write access to repository content
+### 1. Workflow Engine (`.github/workflows/daily-commit.yml`)
+- **Purpose**: Orchestrates daily commit automation and GitHub Pages deployment
+- **Trigger**: Time-based cron schedule (daily at 2:00 AM UTC) + manual dispatch
+- **Actions**: File manipulation, git operations, repository updates, and Pages deployment
+- **Permissions**: Read/write access to repository content and Pages deployment
 
 ### 2. Logging System
 - **Primary Log**: `logs/daily-activity.log` - Cumulative activity record
@@ -66,10 +66,11 @@ Date completed: 2025-07-25 - Complete daily commit automation with modern, mobil
 ## Deployment Strategy
 
 ### Setup Process
-1. **Workflow Installation**: Place workflow file in `.github/workflows/`
-2. **Permission Configuration**: Ensure read/write permissions are enabled
-3. **Directory Creation**: Logs directory created automatically on first run
-4. **Activation**: Workflow becomes active upon merge to main branch
+1. **Repository Setup**: Push code to GitHub repository
+2. **GitHub Pages**: Enable with "GitHub Actions" source in repository settings
+3. **Permission Configuration**: Enable read/write permissions in Actions settings
+4. **Automatic Deployment**: Workflow deploys dashboard to GitHub Pages after each update
+5. **Access**: Dashboard available at `https://[username].github.io/[repository-name]`
 
 ### Maintenance Approach
 - **Zero-maintenance**: Fully automated operation
@@ -83,4 +84,4 @@ Date completed: 2025-07-25 - Complete daily commit automation with modern, mobil
 - **File locations**: Log directory and file names configurable
 - **Commit messages**: Message templates can be modified
 
-The system prioritizes simplicity and reliability, avoiding complex dependencies while maintaining consistent repository activity through automated daily commits.
+The system prioritizes simplicity and reliability, avoiding complex dependencies while maintaining consistent repository activity through automated daily commits. The dashboard intelligently detects GitHub Pages hosting and loads data directly from log files, ensuring seamless operation in both development and production environments.
