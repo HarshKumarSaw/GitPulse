@@ -76,7 +76,7 @@ jobs:
         
         # Configure git with consistent identity
         git config --local user.email "harshsaw01@gmail.com"
-        git config --local user.name "Harsh Kumar Saw"
+        git config --local user.name "HarshKumarSaw"
         git config --local core.autocrlf false
         
         # Check if there are changes to commit
